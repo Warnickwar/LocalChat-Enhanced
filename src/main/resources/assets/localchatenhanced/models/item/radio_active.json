@@ -1,0 +1,6 @@
+{
+  "parent": "localchatenhanced:item/radio",
+  "textures": {
+    "layer0": "localchatenhanced:item/radio_active"
+  }
+}
