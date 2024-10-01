@@ -34,7 +34,8 @@ public class ChatListener {
         return queue;
     }
 
-    private static double distanceTo(Player obj1, Player obj2) {
+    // TODO: Check what distance is being calculated, and why it can be incorrect
+    private static Double distanceTo(Player obj1, Player obj2) {
         int x1 = obj1.getBlockX();
         int y1 = obj1.getBlockY();
         int z1 = obj1.getBlockZ();
@@ -50,8 +51,9 @@ public class ChatListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onServerChatMessage(ServerChatEvent.Submitted event) {
         event.setCanceled(true); // Immediately cancel to prevent usual chat messages
+
         MinecraftServer server = event.getPlayer().getServer();
-        LocalMessageFormat originalMessage = new LocalMessageFormat(event);
+        LocalMessageFormat originalMessage = new LocalMessageFormat(event); // Converts to LocalMessageFormat
 
         // Used to log the message server-side. Administrative purposes.
         if (LocalchatConfigs.LogMessages.get()) { LOGGER.info("Local Message: <{}> {}",
@@ -59,21 +61,21 @@ public class ChatListener {
 
         PriorityBlockingQueue<ItemStack> sendQueue = getChatModifiers(event.getPlayer());
         originalMessage.setPrefix(LocalchatConfigs.LocalColor.get() + LocalchatConfigs.LocalPrefix.get() + "§r ");
-        sendQueue.forEach(item -> {
-            ((IChatModifierObject) item.getItem()).onChatSend(originalMessage,item);
-        });
+        sendQueue.forEach(item -> ((IChatModifierObject) item.getItem()).onChatSend(originalMessage,item));
 
         event.getPlayer().sendSystemMessage(originalMessage.toComponent());
         // Handles every possible player recipient, with their corresponding Chat Modifiers
         for (Player player : Objects.requireNonNull(server).getPlayerList().getPlayers()) {
+            // Stops re-sending message to origin player early
             if (player.is(event.getPlayer())) {  continue; }
+
+            // Creates the queue for the recipients
             PriorityBlockingQueue<ItemStack> receiveQueue = getChatModifiers(player);
             LocalMessageFormat finalMessage = originalMessage.copy();
+            // Executes the queue
+            receiveQueue.forEach(item -> ((IChatModifierObject) item.getItem()).onChatReceive(finalMessage, item, player));
 
-            receiveQueue.forEach(item -> {
-                ((IChatModifierObject) item.getItem()).onChatSend(originalMessage, item);
-            });
-            
+            // Handles extraneous sending (Locally + Globally)
             if (!finalMessage.isCancelled()) { player.sendSystemMessage(finalMessage.toComponent()); }
             if (finalMessage.isLocal() && distanceTo(finalMessage.getOrigin(), player) < LocalchatConfigs.TextDistance.get()) {
                 finalMessage.setPrefix(LocalchatConfigs.LocalColor.get() + LocalchatConfigs.LocalPrefix.get() + "§r ");

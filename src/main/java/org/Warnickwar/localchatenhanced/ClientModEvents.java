@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.Warnickwar.localchatenhanced.items.ModItemProperties;
 
-@Mod.EventBusSubscriber(modid = Localchatenhanced.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(value= Dist.CLIENT, modid = Localchatenhanced.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientModEvents {
 
     @SubscribeEvent

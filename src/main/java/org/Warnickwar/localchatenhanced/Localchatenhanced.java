@@ -8,7 +8,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.Warnickwar.localchatenhanced.items.ItemRegistry;
-import org.Warnickwar.localchatenhanced.items.ModItemProperties;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Localchatenhanced.MODID)
@@ -30,6 +29,6 @@ public class Localchatenhanced {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        new ModItemProperties();
+
     }
 }

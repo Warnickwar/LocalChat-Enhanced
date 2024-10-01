@@ -29,7 +29,7 @@ public class RadioItem extends Item implements IChatToggleObject {
         super(p_41383_);
     }
 
-    public void setFrequency(ItemStack item, int newFreq) {
+    public static void setFrequency(ItemStack item, int newFreq) {
         if (newFreq < 1) { newFreq = 1; }
         int freqMax = LocalchatConfigs.RadioMaxFreq.get();
         if (newFreq > freqMax) { newFreq = freqMax; }
@@ -37,9 +37,15 @@ public class RadioItem extends Item implements IChatToggleObject {
         item.getOrCreateTag().putInt("frequency", newFreq);
     }
 
-    public int getFrequency(ItemStack item) { return item.getOrCreateTag().getInt("frequency"); }
+    public static int getFrequency(ItemStack item) {
+        if (item.getOrCreateTag().isEmpty()) { setDefaultNBTData(item); }
+        return item.getOrCreateTag().getInt("frequency");
+    }
 
-    public boolean isActive(ItemStack item) { return item.getOrCreateTag().getBoolean("active"); }
+    public static boolean isActive(ItemStack item) {
+        if (item.getOrCreateTag().isEmpty()) { setDefaultNBTData(item); }
+        return item.getOrCreateTag().getBoolean("active");
+    }
 
     /*
      TODO: Define custom item functionality
@@ -54,6 +60,7 @@ public class RadioItem extends Item implements IChatToggleObject {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand hand) {
         if (world.isClientSide) { return InteractionResultHolder.pass(player.getItemInHand(hand)); }
+        if (player.getItemInHand(hand).getOrCreateTag().isEmpty()) { setDefaultNBTData(player.getItemInHand(hand));}
         if (player.isShiftKeyDown()) {
             // change Freq
             DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> ClientHooks.openRadioScreen(player.getItemInHand(hand)));
@@ -93,14 +100,21 @@ public class RadioItem extends Item implements IChatToggleObject {
     }
 
     @Override
-    public LocalMessageFormat onChatReceive(LocalMessageFormat message, ItemStack item) {
+    public LocalMessageFormat onChatReceive(LocalMessageFormat message, ItemStack item, Player recipient) {
+        boolean onlyActive = LocalchatConfigs.RadioOnlyActiveFreq.get();
         ArrayList<Object> tags = message.getTags();
-        if (!tags.contains(RadioTag.class)) { return message; }
-        RadioTag info = (RadioTag) tags.get(tags.indexOf(RadioTag.class));
-        if (LocalchatConfigs.RadioOnlyActiveFreq.get()) {
-            if (isActive(item) && info.frequency == getFrequency(item)) { message.setCancelled(false); }
-        } else {
-            if (info.frequency == getFrequency(item)) { message.setCancelled(false); }
+        for (Object tag : tags) {
+            if (tag instanceof RadioTag radioInfo) {
+                if (radioInfo.frequency() == getFrequency(item)) {
+                    if (onlyActive) {
+                        if (isActive(item)) {
+                            message.setCancelled(false);
+                        }
+                    } else {
+                        message.setCancelled(false);
+                    }
+                }
+            }
         }
         return message;
     }
@@ -113,7 +127,7 @@ public class RadioItem extends Item implements IChatToggleObject {
         super.appendHoverText(itemstack,world,components,flag);
     }
 
-    public void setDefaultNBTData(ItemStack item) {
+    public static void setDefaultNBTData(ItemStack item) {
         if (!item.getOrCreateTag().contains("frequency")) { item.getOrCreateTag().putInt("frequency", LocalchatConfigs.RadioDefaultFreq.get()); }
         if (!item.getOrCreateTag().contains("active")) { item.getOrCreateTag().putBoolean("active", false); }
     }

@@ -6,18 +6,15 @@ import net.minecraftforge.event.ServerChatEvent;
 
 import java.util.ArrayList;
 
+@SuppressWarnings(value = "unused")
 public class LocalMessageFormat {
-
-    /*
-     * Yes, this is horrendous coding for a format.
-     */
 
     private final Player origin;
     private Component prefix;
     private Component displayName;
     private Component suffix;
     private Component message;
-    private final ArrayList<Object> tags = new ArrayList<>();
+    private final ArrayList<Object> tags;
     private boolean isCancelled;
     private boolean isLocal;
 
@@ -29,6 +26,7 @@ public class LocalMessageFormat {
         this.message = event.getMessage();
         this.isCancelled = event.isCanceled();
         this.isLocal = true;
+        this.tags = new ArrayList<>();
     }
 
     // *technically* this can be optimized, but I'm lazy.
@@ -41,7 +39,8 @@ public class LocalMessageFormat {
         this.suffix = copy.getSuffix();
         this.message = copy.getMessage();
         this.isCancelled = copy.isCancelled();
-        this.isLocal = true;
+        this.isLocal = copy.isLocal();
+        this.tags = copy.getTags();
     }
 
     /**
@@ -242,9 +241,7 @@ public class LocalMessageFormat {
      * @return The built string
      */
     public String toString() {
-        return Component.literal(this.prefix.getString()+"<"+this.displayName.getString()+"> ")
-                .append(this.suffix)
-                .append(this.message)
+        return toComponent()
                 .toString();
     }
 

@@ -25,6 +25,15 @@ public class ProxyItem extends Item implements IChatModifierObject {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
         CompoundTag tag = player.getItemInHand(hand).getOrCreateTag();
         if (tag.isEmpty()) { setDefaultNBTData(player.getItemInHand(hand)); }
+        if (!tag.getBoolean("active")) {
+            for (ItemStack item : player.getInventory().items) {
+                if (item.getItem() instanceof ProxyItem) {
+                    if (item.getOrCreateTag().isEmpty()) { setDefaultNBTData(item); }
+                    assert item.getTag() != null;
+                    item.getTag().putBoolean("active", false);
+                }
+            }
+        }
         tag.putBoolean("active", !tag.getBoolean("active"));
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
@@ -33,15 +42,16 @@ public class ProxyItem extends Item implements IChatModifierObject {
 
     @Override
     public LocalMessageFormat onChatSend(LocalMessageFormat message, ItemStack item) {
+        if (item.getOrCreateTag().isEmpty()) { setDefaultNBTData(item); }
         if (isActive(item)) {
-            message.setDisplayName(item.getTag().getString("fakename"));
+            message.setDisplayName(item.getOrCreateTag().getString("fakename"));
         }
         return message;
     }
 
     // Utils
 
-    public void setDefaultNBTData(ItemStack item) {
+    public static void setDefaultNBTData(ItemStack item) {
         if (!item.getOrCreateTag().contains("active")) { item.getOrCreateTag().putBoolean("active", false); }
         if (!item.getOrCreateTag().contains("fakename")) { item.getOrCreateTag().putString("fakename", "FakeUsername!"); }
     }
