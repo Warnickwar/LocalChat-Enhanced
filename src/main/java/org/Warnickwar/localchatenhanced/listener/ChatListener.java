@@ -34,17 +34,6 @@ public class ChatListener {
         return queue;
     }
 
-    // TODO: Check what distance is being calculated, and why it can be incorrect
-    private static Double distanceTo(Player obj1, Player obj2) {
-        int x1 = obj1.getBlockX();
-        int y1 = obj1.getBlockY();
-        int z1 = obj1.getBlockZ();
-        int x2 = obj2.getBlockX();
-        int y2 = obj2.getBlockY();
-        int z2 = obj2.getBlockZ();
-        return Math.sqrt(Math.abs(((x1+x2)^2)+((y1+y2)^2)+((z1+z2)^2)));
-    }
-
     // TODO: Hijack /msg and /tell to prevent their usage... somehow.
     //  That's going to be hard.
 
@@ -77,7 +66,7 @@ public class ChatListener {
 
             // Handles extraneous sending (Locally + Globally)
             if (!finalMessage.isCancelled()) { player.sendSystemMessage(finalMessage.toComponent()); }
-            if (finalMessage.isLocal() && distanceTo(finalMessage.getOrigin(), player) < LocalchatConfigs.TextDistance.get()) {
+            if (finalMessage.isLocal() && finalMessage.getOrigin().distanceTo(player) < LocalchatConfigs.TextDistance.get()) {
                 finalMessage.setPrefix(LocalchatConfigs.LocalColor.get() + LocalchatConfigs.LocalPrefix.get() + "§r ");
                 player.sendSystemMessage(finalMessage.toComponent());
             }

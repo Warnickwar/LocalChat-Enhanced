@@ -21,6 +21,7 @@ public class Localchatenhanced {
 
         modEventBus.addListener(this::commonSetup);
 
+        //noinspection InstantiationOfUtilityClass
         new ItemRegistry(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);

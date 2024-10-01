@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.Warnickwar.localchatenhanced.utils.ChatModifierObjectPriority;
 import org.Warnickwar.localchatenhanced.utils.IChatModifierObject;
 import org.Warnickwar.localchatenhanced.utils.LocalMessageFormat;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,11 @@ public class ProxyItem extends Item implements IChatModifierObject {
     }
 
     // Localchat Functionality
+
+    @Override
+    public ChatModifierObjectPriority getPriority() {
+        return ChatModifierObjectPriority.HIGHEST;
+    }
 
     @Override
     public LocalMessageFormat onChatSend(LocalMessageFormat message, ItemStack item) {
