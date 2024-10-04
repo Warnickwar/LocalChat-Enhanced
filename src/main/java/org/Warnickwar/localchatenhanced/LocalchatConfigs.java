@@ -16,17 +16,13 @@ public class LocalchatConfigs {
     public static final ForgeConfigSpec.ConfigValue<Boolean> OpAffected;
     public static final ForgeConfigSpec.ConfigValue<Boolean> LogMessages;
     public static final ForgeConfigSpec.ConfigValue<Double> TextDistance;
-    public static final ForgeConfigSpec.ConfigValue<Boolean> YellingEnabled;
-    public static final ForgeConfigSpec.ConfigValue<Double> YellingDistance;
     public static final ForgeConfigSpec.ConfigValue<Boolean> EchoedRadio;
     public static final ForgeConfigSpec.ConfigValue<Boolean> EchoedLoudspeaker;
     public static final ForgeConfigSpec.ConfigValue<String> LoudspeakerColor;
     public static final ForgeConfigSpec.ConfigValue<String> RadioColor;
     public static final ForgeConfigSpec.ConfigValue<String> LocalColor;
-    public static final ForgeConfigSpec.ConfigValue<String> YellingColor;
     public static final ForgeConfigSpec.ConfigValue<String> OperatorColor;
     public static final ForgeConfigSpec.ConfigValue<String> LocalPrefix;
-    public static final ForgeConfigSpec.ConfigValue<String> YellingPrefix;
     public static final ForgeConfigSpec.ConfigValue<String> OpPrefix;
     public static final ForgeConfigSpec.ConfigValue<String> RadioPrefix;
     public static final ForgeConfigSpec.ConfigValue<String> LoudspeakerPrefix;
@@ -48,12 +44,6 @@ public class LocalchatConfigs {
 
         TextDistance = BUILDER.comment("\nHow far Players' chat messages go by default")
                 .defineInRange("Chat Distance:",32.0,10.0,128.0);
-
-        YellingEnabled = BUILDER.comment("\nWill typing only in capital letters increase the range of messages?")
-                .define("Is Yelling Enabled?:",true);
-
-        YellingDistance = BUILDER.comment("\nHow much should messages be \"audible\" when yelling? (Must have yelling enabled!)")
-                .defineInRange("Yelling Distance:",64.0, 10.0,256.0);
 
         EchoedRadio = BUILDER.comment("\nCan Radio messages also be heard locally around the player?",
                         "Set to false to prevent Radio messages from being sent in a local area")
@@ -82,10 +72,6 @@ public class LocalchatConfigs {
                 .comment("A list of codes can be found here: https://minecraft.wiki/w/Formatting_codes#Formatting_codes")
                 .define("Local Color:","§b");
 
-        YellingColor = BUILDER.comment("\nWhat should the color of Yell messages be? (Use MC's formatting codes!)")
-                .comment("A list of codes can be found here: https://minecraft.wiki/w/Formatting_codes#Formatting_codes")
-                .define("Yelling Color:","§c");
-
         OperatorColor = BUILDER.comment("\nWhat should the color of Operator messages be? (Use MC's formatting codes!)")
                 .comment("A list of codes can be found here: https://minecraft.wiki/w/Formatting_codes#Formatting_codes")
                 .define("Operator Color:","§6");
@@ -100,9 +86,6 @@ public class LocalchatConfigs {
 
         LocalPrefix = BUILDER.comment("\nThe prefix used for LOCAL messages")
                 .define("Local Prefix:", "[LOCAL]");
-
-        YellingPrefix = BUILDER.comment("\nThe prefix used for YELLING messages")
-                .define("Yelling Prefix:", "[SHOUT]");
 
         OpPrefix = BUILDER.comment("\nThe prefix used for OPERATOR messages")
                 .define("Operator Prefix:", "[OPERATOR]");
